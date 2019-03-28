@@ -1,0 +1,136 @@
+/* Globals */
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: Georgia, serif;
+  --color-secondary: #444;
+  --color-link: #635ac7;
+  --color-link-hover: blueviolet;
+
+  font-family: var(--font-sans);
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--color-link);
+}
+a:hover {
+  cursor:pointer;
+  color: var(--color-link-hover);
+}
+.disabled {
+	opacity:0.5;
+}
+.disabled:hover {
+	cursor: not-allowed;
+}
+.active {
+	border:2px solid tomato;
+}
+/* Snippets */
+.site-header {
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.site-header__quote {
+  color: var(--color);
+  font-family: var(--font-serif);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 460px;
+}
+
+.site-footer {
+  color: var(--color);
+  font-family: var(--font-serif);
+  text-align: center;
+}
+.container {
+  margin:2.0em auto;
+  width:70%;
+}
+
+.fa-heart {
+	font-size:0.8em;
+}
+/* Dog image gallery slideshow */
+.close-me {
+	float:right;
+}
+
+.dog-gallery-slideshow {
+	display: none;
+	width:100%;
+	margin:0 auto;
+}
+.dog-gallery-slideshow-info {
+	float:right;
+	font-size:170%;
+	margin-right:1.0em;
+	margin-top:-0.25em;
+}
+.dog-gallery-slideshow-info-popup {
+	font-size:0.5em;
+}
+.dog-gallery-navigation {
+	display:flex;
+	justify-content:center;
+}
+.dog-gallery-navigation a i{
+  display:block;
+  font-size:170%;
+}
+.dog-image-counter {
+	text-align: center;
+	margin-left: 2.0em;
+	margin-right: 2.0em;
+	margin-top: 1.7em;
+	color:var(--color-secondary);
+}
+.dog-gallery {
+	margin-top:1.0em;
+}
+.dog-image img{
+	width:100%;
+	border-radius:5px;
+}
+.dog-gallery-thumbnail-all {
+	display:flex;
+	justify-content: center;
+}
+.dog-gallery-thumbnail-nav {
+	font-size:170%;
+	margin-top:1.0em;
+}
+.dog-gallery-thumbnail {
+	margin-top:1.0em;
+	margin-bottom:1.0em;
+	display:flex;
+
+}
+.dog-gallery-thumbnail .dog-image {
+	width:20%;
+	padding:0.5em;
+}
+.dog-gallery-thumbnail .dog-image:hover {
+	cursor: zoom-in;
+}
+.dog-gallery-thumbnail .dog-image img {
+	width:6.0em;
+	height:4.0em;
+}
+.dog-image-set-counter {
+	font-size:40%;
+}
+
+.box {
+	height:1.0em;
+	width:auto;
+	background:black;
+}

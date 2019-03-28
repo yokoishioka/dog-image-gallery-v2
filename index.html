@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Asana | San Francisco Pet Adoption Agency</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="assets/styles/site.css">
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(){
+	var items = [];
+	var ids = [];
+	var fileNames = [];
+	var thisIndex = 0;
+	var thisIndexThumb = 0;
+	var galleryLength;
+	var thumbnailLimit = 5;
+
+	// get header and footer
+	$.get("assets/snippets/header.html", function(data) {
+		$(".header").html(data);
+	});
+	$.get("assets/snippets/footer.html", function(data) {
+		$(".footer").html(data);
+	});
+	
+	// get images from the feed into the gallery
+    $.getJSON( "assets/data/dogs.json", function( data ) {
+		$.each( data.dogs, function( key, val ) {
+			ids.push(key);
+			fileNames.push(val);
+			items.push("<div class='dog-image' id='" + key + "'><img src='/dog-image-gallery/" + val.image + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>");
+		});
+		console.log(ids, fileNames);
+		galleryLength = items.length;
+		
+		
+		// add image counter
+		$(".dog-image-counter").html((thisIndex + 1) + " / " + galleryLength);
+		
+		// put images into the thumbnail 
+		for (i = 0; i < thumbnailLimit; i++) {
+			$(".dog-gallery-thumbnail").append(items[i]);
+		}
+		$(".next-dog-image-set-counter").text(thumbnailLimit + "/" + parseInt(thumbnailLimit + thumbnailLimit));
+	});	
+	
+	function addImageCounter() {
+		
+	}
+	function addNavigation() {
+		
+	}
+	function createThumbnailGallery() {
+		
+	}
+	function createSlideshowGallery() {
+		
+	}
+	function createImage() {
+		
+	}
+	function countMe() {
+		
+	}
+	function countTotal() {
+		
+	}
+	function countRow() {
+		
+	}
+	function createNavBack() {
+		
+	}
+	function createNavForward() {
+		
+	}
+	
+	// dog image thumbnail gallery - show prev or next set of thumbnails
+	$("a.prev-dog-image-set").addClass("disabled");
+	$("a.prev-dog-image-set").click(function(){
+		$("a.next-dog-image-set").removeClass("disabled");
+		if ((thisIndexThumb + thumbnailLimit) % thumbnailLimit == 0 && (thisIndexThumb > 0)) {
+			$(".dog-gallery-thumbnail").html("");
+			for (i = thisIndexThumb - thumbnailLimit; i < thisIndexThumb; i++) {
+				$(".dog-gallery-thumbnail").append(items[i]);
+			}
+			thisIndexThumb = thisIndexThumb - thumbnailLimit;
+			updateThumbCounter();
+			
+		}
+	});
+	$("a.next-dog-image-set").click(function(){
+		$("a.prev-dog-image-set").removeClass("disabled");
+		if ((thisIndexThumb + thumbnailLimit) % thumbnailLimit == 0 && (thisIndexThumb < galleryLength - thumbnailLimit)) {
+			console.log(thisIndexThumb + thumbnailLimit);
+			$(".dog-gallery-thumbnail").html("");
+			for (i = thisIndexThumb + thumbnailLimit; i < thisIndexThumb + thumbnailLimit + thumbnailLimit; i++) {
+				$(".dog-gallery-thumbnail").append(items[i]);
+			}
+			thisIndexThumb = thisIndexThumb + thumbnailLimit;
+			
+			updateThumbCounter();
+			
+			
+			
+		}	
+	});
+
+	// dog image gallery - prev and next navigation buttons	
+	$('a.prev-dog-image').addClass("disabled");
+	
+	$('a.prev-dog-image').click(function(){
+		if (thisIndex < galleryLength - thumbnailLimit + 1) {
+			$("a.next-dog-image-set").removeClass("disabled");
+		}
+		if (thisIndex < thumbnailLimit + 1) {
+			$("a.prev-dog-image-set").addClass("disabled");
+		}
+		
+		if (thisIndex == 1) {
+			$(this).addClass("disabled");
+		}
+		if (thisIndex > 0) {
+			
+			thisIndex--;
+			
+			// update thumbnail gallery with prev thumbnailLimit images
+			if ((thisIndex + 2) % thumbnailLimit == 1) {
+				$(".dog-gallery-thumbnail").html("");
+				for (i = thisIndex - thumbnailLimit + 1; i < thisIndex + 1; i++) {
+					$(".dog-gallery-thumbnail").append(items[i]);
+				}
+				thisIndexThumb = thisIndex - thumbnailLimit + 1;
+				updateThumbCounter();
+			}
+					
+			// change border around thumbnail image to active
+			$(".dog-gallery-thumbnail #" + (thisIndex + 1) + ".dog-image img").removeClass("active");
+			$(".dog-gallery-thumbnail #" + thisIndex + ".dog-image img").addClass("active");
+			
+			// get prev image to put into slideshow
+			$(".dog-gallery").html(items[thisIndex]);
+			$(".dog-image-counter").html((thisIndex + 1) + " / " + galleryLength);
+			$("a.next-dog-image").removeClass("disabled");
+		}
+		
+	});
+	$('a.next-dog-image').click(function(){
+
+		if (thisIndex >= thumbnailLimit - 1) {
+			$("a.prev-dog-image-set").removeClass("disabled");
+		}
+		if (thisIndex > galleryLength - thumbnailLimit - 2) {
+			$("a.next-dog-image-set").addClass("disabled");
+		}
+		if (thisIndex == galleryLength - 2) {
+			$(this).addClass("disabled");
+		}
+		if (thisIndex < galleryLength - 1) {
+			thisIndex++;
+			// update thumbnail gallery with next thumbnailLimit images
+			if ((thisIndex + 1) % thumbnailLimit == 1) {
+				$(".dog-gallery-thumbnail").html("");
+				for (i = thisIndex; i < (thumbnailLimit + thisIndex); i++) {
+					$(".dog-gallery-thumbnail").append(items[i]);
+				}
+				thisIndexThumb = thisIndex;
+				updateThumbCounter();
+				console.log(thisIndex);
+			}
+			// change border around thumbnail image to active
+			$(".dog-gallery-thumbnail #" + (thisIndex - 1) + ".dog-image img").removeClass("active");
+			$(".dog-gallery-thumbnail #" + thisIndex + ".dog-image img").addClass("active");
+			
+			// get next image to put into slideshow
+			$(".dog-gallery").html(items[thisIndex]);
+			$(".dog-image-counter").html((thisIndex + 1) + " / " + galleryLength);
+			$("a.prev-dog-image").removeClass("disabled");
+		}
+
+	});
+	// dog image thumbnail gallery - send thumbnail to slideshow gallery
+	$(document).on("click", ".dog-gallery-thumbnail .dog-image", function(){
+		$(".header").hide();
+		$(".dog-gallery-slideshow").show();
+		
+		hideBorder();
+		$(".dog-gallery-thumbnail #" + this.id + ".dog-image img").addClass("active");
+		
+		// make sure navigation is disabled if user can't progress in slideshow
+		$("a.next-dog-image, a.prev-dog-image").removeClass("disabled");
+		if (this.id == 0) {
+			$("a.prev-dog-image").addClass("disabled");
+		}
+		else if (this.id == galleryLength - 1) {
+			$("a.next-dog-image").addClass("disabled");
+		}
+		
+		// change slideshow image to selected thumbnail
+		$(".dog-gallery").html(items[this.id]);
+		thisIndex = parseInt(this.id);
+		$(".dog-image-counter").html((thisIndex + 1) + " / " + galleryLength);
+		
+	});
+
+	// close slideshow 
+	$(".close-me").click(function(){
+		$(this).parent().hide();
+		$(".header").show();
+		hideBorder();
+	});
+	
+	// remove border from thumbnail img
+	function hideBorder() {
+		$(".dog-gallery-thumbnail .dog-image img").each(function(){
+			$(this).removeClass("active");
+		});
+	}
+	
+	function updateThumbCounter() {
+		
+		$(".prev-dog-image-set-counter").text(thisIndexThumb + "/" + parseInt(thisIndexThumb + thumbnailLimit));
+		$(".next-dog-image-set-counter").text(parseInt(thisIndexThumb + thumbnailLimit) + "/" + parseInt(thisIndexThumb + thumbnailLimit + thumbnailLimit));
+		if (thisIndexThumb == galleryLength - thumbnailLimit) {
+				$(".next-dog-image-set").addClass("disabled");
+				$(".next-dog-image-set-counter").text("");
+		}
+		if (thisIndexThumb == 0) {
+			$(".prev-dog-image-set-counter").text("");
+			$(".prev-dog-image-set").addClass("disabled");
+		}
+	}
+
+});
+</script>
+</head>
+
+<body>
+	<div class="container">
+		<header class="header"></header>
+		<div class="dog-gallery-thumbnail-all">
+			<a class="dog-gallery-thumbnail-nav prev-dog-image-set"><i class="fas fa-angle-double-left"></i> <div class="prev-dog-image-set-counter dog-image-set-counter"></div></a>
+			<div class="dog-gallery-thumbnail">
+			</div>
+			<a class="dog-gallery-thumbnail-nav next-dog-image-set"><i class="fas fa-angle-double-right"></i> <div class="next-dog-image-set-counter dog-image-set-counter"></div></a>
+		</div>
+		
+		
+		<div class="dog-gallery-slideshow">	
+			<div class="dog-gallery-navigation">
+				<a class="prev-dog-image">
+					<i class="fas fa-dog"></i>
+					<i class="fas fa-angle-double-left"></i>
+				</a>
+				<div class="dog-image-counter">
+				</div>
+				<a class="next-dog-image">
+					<i class="fas fa-dog"></i>
+					<i class="fas fa-angle-double-right"></i>
+				</a>
+			
+			</div>
+			<a class="close-me" title="Close Slideshow"><i class="far fa-times-circle"></i></a>
+			
+		
+			<div class="dog-gallery">
+				
+			</div>
+		</div>
+		<footer class="footer">
+		</footer>
+		
+	</div>
+  
+</body>
+</html>
