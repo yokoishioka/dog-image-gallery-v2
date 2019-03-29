@@ -9,55 +9,24 @@
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
-<script>
 
-
-	
-
-
-
-</script>
 </head>
 
 <body>
 	<div id="container">
 		<header id="header"></header>
-<!--		<div class="dog-gallery-thumbnail-all">
-			<a class="dog-gallery-thumbnail-nav prev-dog-image-set"><i class="fas fa-angle-double-left"></i> <div class="prev-dog-image-set-counter dog-image-set-counter"></div></a>
-			<div class="dog-gallery-thumbnail">
-			</div>
-			<a class="dog-gallery-thumbnail-nav next-dog-image-set"><i class="fas fa-angle-double-right"></i> <div class="next-dog-image-set-counter dog-image-set-counter"></div></a>
-		</div>
-		
-		
-		<div class="dog-gallery-slideshow">	
-			<div class="dog-gallery-navigation">
-				<a class="prev-dog-image">
-					<i class="fas fa-dog"></i>
-					<i class="fas fa-angle-double-left"></i>
-				</a>
-				<div class="dog-image-counter">
-				</div>
-				<a class="next-dog-image">
-					<i class="fas fa-dog"></i>
-					<i class="fas fa-angle-double-right"></i>
-				</a>
-			
-			</div>
-			<a class="close-me" title="Close Slideshow"><i class="far fa-times-circle"></i></a>
-			
-		
-			<div class="dog-gallery">
-				
-			</div>
-		</div>-->
+
 		<main id="content">
 			<div id="gallery-main">
 				<div id="gallery-main-nav">
+					<div id="main-nav-prev"></div>
+					<div id="main-nav-next"></div>
 				</div>
 			</div>
 			<div id="gallery-thumb">
-				<div id="gallery-main-thumb">
+				<div id="gallery-thumb-nav">
+					<div id="thumb-nav-prev" onClick="navigateGallery('previous');">PREV</div>
+					<div id="thumb-nav-next" onClick="navigateGallery('next');">NEXT</div>
 				</div>
 			</div>
 		</main>
@@ -70,6 +39,8 @@
 var dataImages = [];
 var dataSources = [];
 var imageList = [];
+	
+var length = 0;	
 var thisIndex = 0;
 	
 var fileName = "assets/data/dogs.json";
@@ -103,7 +74,7 @@ $.getJSON( fileName, function( data ) {
 
 // create HTML for images and put into imageList[]
 function createImageList() {
-	var length = dataImages.length;
+	length = dataImages.length;
 	
 	for (i = 0; i < length; i++) {
 		var str = "<div class='dog-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
@@ -119,7 +90,15 @@ function updateGalleryMain(index) {
 	galleryMain.append().html(imageList[index]);
 }
 	
-
+function navigateGallery(direction) {
+	if (direction == "previous" && thisIndex !== 0) {
+		thisIndex--;
+	}
+	else if (direction == "next" && thisIndex !== length) {
+		thisIndex++;
+	}
+	updateGalleryMain(thisIndex);
+}
 
 </script>
 </body>
