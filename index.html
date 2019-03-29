@@ -11,40 +11,10 @@
   crossorigin="anonymous"></script>
 <script>
 
-var dataImages = [];
-var dataSources = [];
-var imageList = [];
-
-var fileName = "assets/data/dogs.json";
-	
-$(document).ready(function(){
-	
-	var gallerySlideshowMain = $("#gallery-slideshow-main");
-	var header = $("#header");
-	var footer = $("#footer");
 
 	
-	// get header and footer
-	$.get("assets/snippets/header.html", function(data) {
-		header.html(data);
-	});
-	$.get("assets/snippets/footer.html", function(data) {
-		footer.html(data);
-	});
-	
-	$.getJSON( fileName, function( data ) {
-		$.each( data.dogs, function( key, val ) {	
-			dataImages.push(val.image);
-			dataSources.push(val.source);
 
-		});
 
-		
-		createImageList();
-	});	
-	
-
-});
 
 </script>
 </head>
@@ -52,7 +22,7 @@ $(document).ready(function(){
 <body>
 	<div id="container">
 		<header id="header"></header>
-		<div class="dog-gallery-thumbnail-all">
+<!--		<div class="dog-gallery-thumbnail-all">
 			<a class="dog-gallery-thumbnail-nav prev-dog-image-set"><i class="fas fa-angle-double-left"></i> <div class="prev-dog-image-set-counter dog-image-set-counter"></div></a>
 			<div class="dog-gallery-thumbnail">
 			</div>
@@ -80,10 +50,15 @@ $(document).ready(function(){
 			<div class="dog-gallery">
 				
 			</div>
-		</div>
+		</div>-->
 		<main id="content">
-			<div id="gallery-slideshow-main">
-				
+			<div id="gallery-main">
+				<div id="gallery-main-nav">
+				</div>
+			</div>
+			<div id="gallery-thumb">
+				<div id="gallery-main-thumb">
+				</div>
 			</div>
 		</main>
 		<footer id="footer">
@@ -92,6 +67,40 @@ $(document).ready(function(){
 	</div>
 	
 <script>
+var dataImages = [];
+var dataSources = [];
+var imageList = [];
+var thisIndex = 0;
+	
+var fileName = "assets/data/dogs.json";
+	
+var galleryMain = $("#gallery-main");
+var header = $("#header");
+var footer = $("#footer");
+
+
+// get header and footer
+$.get("assets/snippets/header.html", function(data) {
+	header.html(data);
+});
+$.get("assets/snippets/footer.html", function(data) {
+	footer.html(data);
+});
+
+// fetch JSON from file
+$.getJSON( fileName, function( data ) {
+	$.each( data.dogs, function( key, val ) {	
+		dataImages.push(val.image);
+		dataSources.push(val.source);
+
+	});
+	console.log(dataImages.length + " values fetched");
+
+	// put html blocks into ImageList[]
+	createImageList();
+	updateGalleryMain(thisIndex);
+});	
+
 // create HTML for images and put into imageList[]
 function createImageList() {
 	var length = dataImages.length;
@@ -101,9 +110,16 @@ function createImageList() {
 
 		imageList[i] = str;
 	}
-	console.log("image list created: " + imageList.length);
+	console.log(length + " images created");
 
 }
+	
+// fetch image from ImageList[] and put into main gallery
+function updateGalleryMain(index) {
+	galleryMain.append().html(imageList[index]);
+}
+	
+
 
 </script>
 </body>
