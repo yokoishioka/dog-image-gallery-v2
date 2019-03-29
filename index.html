@@ -10,75 +10,49 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
 <script>
-	const IMAGELIST = [];
+
+var dataImages = [];
+var dataSources = [];
+var imageList = [];
+
+var fileName = "assets/data/dogs.json";
+	
 $(document).ready(function(){
-	var fileName = "assets/data/dogs.json";
+	
+	var gallerySlideshowMain = $("#gallery-slideshow-main");
+	var header = $("#header");
+	var footer = $("#footer");
+
+	
 	// get header and footer
 	$.get("assets/snippets/header.html", function(data) {
-		$(".header").html(data);
+		header.html(data);
 	});
 	$.get("assets/snippets/footer.html", function(data) {
-		$(".footer").html(data);
+		footer.html(data);
 	});
 	
-	createImageList(fileName);
-	
-
-	
-
-
-
-function createThumbnailGallery() {
-
-}
-function createSlideshowGallery() {
-
-}
-	
-// get data from JSON file to create HTML for the image file
-function createImageList(fileName) {
-	
 	$.getJSON( fileName, function( data ) {
-		$.each( data.dogs, function( key, val ) {		
-			IMAGELIST.push("<div class='dog-image' id='" + key + "'><img src='/dog-image-gallery/" + val.image + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>");
+		$.each( data.dogs, function( key, val ) {	
+			dataImages.push(val.image);
+			dataSources.push(val.source);
+
 		});
+
+		
+		createImageList();
 	});	
-console.log(IMAGELIST);
-	return false;
 	
-	
-}
-function addImageCounter() {
 
-}
-
-function countMe() {
-
-}
-function countTotal() {
-
-}
-function countRow() {
-
-}
-
-function addNavigation() {
-
-}
-function createNavBack() {
-
-}
-function createNavForward() {
-
-}
 });
+
 </script>
 </head>
 
 <body>
-	<div class="container">
-		<header class="header"></header>
-<!--		<div class="dog-gallery-thumbnail-all">
+	<div id="container">
+		<header id="header"></header>
+		<div class="dog-gallery-thumbnail-all">
 			<a class="dog-gallery-thumbnail-nav prev-dog-image-set"><i class="fas fa-angle-double-left"></i> <div class="prev-dog-image-set-counter dog-image-set-counter"></div></a>
 			<div class="dog-gallery-thumbnail">
 			</div>
@@ -106,45 +80,30 @@ function createNavForward() {
 			<div class="dog-gallery">
 				
 			</div>
-		</div>-->
+		</div>
 		<main id="content">
-			<div class="gallery-slideshow main-slideshow">
+			<div id="gallery-slideshow-main">
 				
 			</div>
 		</main>
-		<footer class="footer">
+		<footer id="footer">
 		</footer>
 		
 	</div>
 	
 <script>
-/*var xmlhttp = new XMLHttpRequest();
+// create HTML for images and put into imageList[]
+function createImageList() {
+	var length = dataImages.length;
+	
+	for (i = 0; i < length; i++) {
+		var str = "<div class='dog-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
 
-
-xmlhttp.onreadystatechange = function() {
- if (this.readyState == 4 && this.status == 200) {
-
-    var myObj = JSON.parse(this.responseText);
-
-	 myObj = JSON.stringify(myObj);
-
- 	console.log(entries);
-  }
-};
-xmlhttp.open("GET", "assets/data/dogs.json", true);
-xmlhttp.send();*/
-
-
-//createArrays();
-/*
-function createArrays() {
-	var thisArray = arrayName;
-	for (var i = 0; i < thisArray.length; i++) {
-		ids[i] = thisArray[i].image;
+		imageList[i] = str;
 	}
-	console.log(ids);
+	console.log("image list created: " + imageList.length);
+
 }
-*/
 
 </script>
 </body>
