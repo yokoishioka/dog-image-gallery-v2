@@ -18,15 +18,19 @@
 
 		<main id="content">
 			<div id="gallery-main">
+				<div class="close">CLOSE</div>
 				<div id="gallery-main-nav">
-					<div id="main-nav-prev"></div>
-					<div id="main-nav-next"></div>
+					<div class="nav-prev" >PREV</div>
+					<div class="nav-next" >NEXT</div>
+					
 				</div>
 			</div>
 			<div id="gallery-thumb">
+				<div class="close">CLOSE</div>
 				<div id="gallery-thumb-nav">
-					<div id="thumb-nav-prev" onClick="navigateGallery(this.id,'previous');">PREV</div>
-					<div id="thumb-nav-next" onClick="navigateGallery(this.id, 'next');">NEXT</div>
+					<div class="nav-prev" >PREV</div>
+					<div class="nav-next" >NEXT</div>
+					
 				</div>
 			</div>
 		</main>
@@ -71,7 +75,39 @@ $.getJSON( fileName, function( data ) {
 	createImageList();
 	updateGalleryMain(thisIndex);
 });	
-
+$(".close").click(function(){
+	$(this).parent().hide();
+});
+$(".nav-next").click(function(){
+	var self = $(this);
+	if (thisIndex < length - 1) {
+		thisIndex++;
+		
+		if (thisIndex === length - 1) {
+			self.addClass("disabled");
+		}
+		updateGalleryMain(thisIndex);
+	}
+	if (thisIndex === 1) {
+		self.siblings().removeClass("disabled");
+	}
+	console.log("next: " + thisIndex);
+});
+$(".nav-prev").click(function(){
+	var self = $(this);
+	if (thisIndex >= 1) {
+		thisIndex--;
+		
+		if (thisIndex === 0) {
+			self.addClass("disabled");
+		}
+		updateGalleryMain(thisIndex);
+	}
+	if (thisIndex === length - 2) {
+		self.siblings().removeClass("disabled");
+	}
+	console.log("prev: " + thisIndex);
+});
 // create HTML for images and put into imageList[]
 function createImageList() {
 	length = dataImages.length;
@@ -90,46 +126,7 @@ function updateGalleryMain(index) {
 	galleryMain.append().html(imageList[index]);
 }
 
-// go to next/previous image if there is one to go to
-function navigateGallery(id, direction) {
-	var thisElement = document.getElementById(id);
-	let updateGallery = false;
-	if (direction == "previous") {
-		
-		if (thisIndex >= 1) {
-			thisIndex--;
-		
-			if (thisIndex === 0) {
-				thisElement.classList.add("disabled");
 
-			}
-			else if (thisIndex == length - 2) {
-
-				thisElement.nextElementSibling.classList.remove("disabled");
-			}
-			updateGallery = true;
-		}
-
-	}
-	else if (direction == "next") {
-		if (thisIndex < length - 1) {
-			thisIndex++;
-			
-			if (thisIndex == length - 1) {
-				thisElement.classList.add("disabled");
-			}
-			else if (thisIndex === 1) {
-				thisElement.previousElementSibling.classList.remove("disabled");
-	
-			}
-			updateGallery = true;
-		}
-	}
-	if (updateGallery === true) {
-		updateGalleryMain(thisIndex);
-		console.log(thisIndex);
-	}
-}
 
 </script>
 </body>
