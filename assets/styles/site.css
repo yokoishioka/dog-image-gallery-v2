@@ -134,3 +134,16 @@ a:hover {
 	width:auto;
 	background:black;
 }
+
+
+.image-viewer {
+	display:flex;
+	justify-content:center;
+
+}
+
+#gallery-thumb-container .dog-image img{
+	width:13.0em;
+	height:8.0em;
+	margin:1.0em;
+}

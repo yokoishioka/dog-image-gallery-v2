@@ -17,20 +17,28 @@
 		<header id="header"></header>
 
 		<main id="content">
-			<div id="gallery-main">
-				<div class="close">CLOSE</div>
-				<div id="gallery-main-nav">
-					<div class="nav-prev" >PREV</div>
-					<div class="nav-next" >NEXT</div>
-					
+			<div id="gallery-main-container">
+				<div class="controls">
+					<div class="close">CLOSE</div>
+					<div class="gallery-nav main">
+						<div class="nav-prev">PREV</div>
+						<div class="nav-next">NEXT</div>
+
+					</div>
+				</div>
+				<div class="image-viewer">
 				</div>
 			</div>
-			<div id="gallery-thumb">
-				<div class="close">CLOSE</div>
-				<div id="gallery-thumb-nav">
-					<div class="nav-prev" >PREV</div>
-					<div class="nav-next" >NEXT</div>
-					
+			<div id="gallery-thumb-container">
+				<div class="controls">
+					<div class="close">CLOSE</div>
+					<div class="gallery-nav thumb">
+						<div class="nav-prev">PREV</div>
+						<div class="nav-next">NEXT</div>
+
+					</div>
+				</div>
+				<div class="image-viewer">
 				</div>
 			</div>
 		</main>
@@ -45,11 +53,16 @@ var dataSources = [];
 var imageList = [];
 	
 var length = 0;	
+var rowMaxLength = 0;
 var thisIndex = 0;
+var rowMax = 5;
+var thisRow = 0;
+
 	
 var fileName = "assets/data/dogs.json";
 	
-var galleryMain = $("#gallery-main");
+var galleryImageMain = $("#gallery-main-container .image-viewer");
+var galleryImageThumb = $("#gallery-thumb-container .image-viewer");
 var header = $("#header");
 var footer = $("#footer");
 
@@ -62,55 +75,105 @@ $.get("assets/snippets/footer.html", function(data) {
 	footer.html(data);
 });
 
-// fetch JSON from file
+// fetch JSON from file and load images for main and thumbnail galleries
 $.getJSON( fileName, function( data ) {
 	$.each( data.dogs, function( key, val ) {	
-		dataImages.push(val.image);
-		dataSources.push(val.source);
+		dataImages[key] = val.image;
+		dataSources[key] = val.source;
 
 	});
 	console.log(dataImages.length + " values fetched");
 
 	// put html blocks into ImageList[]
 	createImageList();
-	updateGalleryMain(thisIndex);
+	updateGalleryMain();
+	updateGalleryThumb();
 });	
 $(".close").click(function(){
 	$(this).parent().hide();
 });
+	
+// go to the next image if main gallery or previous row if thumb gallery
 $(".nav-next").click(function(){
 	var self = $(this);
-	if (thisIndex < length - 1) {
-		thisIndex++;
-		
-		if (thisIndex === length - 1) {
-			self.addClass("disabled");
+	var parent = $(this).parent();
+	var checkMain = parent.hasClass("main");
+	var checkThumb = parent.hasClass("thumb");
+
+	if (checkMain) {
+	
+		if (thisIndex < length - 1) {
+			thisIndex++;
+
+			if (thisIndex === length - 1) {
+				self.addClass("disabled");
+			}
+			updateGalleryMain();
 		}
-		updateGalleryMain(thisIndex);
+		if (thisIndex === 1) {
+			self.siblings().removeClass("disabled");
+		}
+		console.log("next index: " + thisIndex);
 	}
-	if (thisIndex === 1) {
-		self.siblings().removeClass("disabled");
-	}
-	console.log("next: " + thisIndex);
+	else if (checkThumb) {
+	
+		if (thisRow < rowMaxLength - 1) {
+			thisRow++;
+
+			if (thisRow === rowMaxLength - 1) {
+				self.addClass("disabled");
+			}
+			updateGalleryThumb();
+		}
+		if (thisRow === 1) {
+			self.siblings().removeClass("disabled");
+		}
+		console.log("next row: " + thisRow);
+	}	
 });
+	
+// go to the previous image if main gallery or previous row if thumb gallery
 $(".nav-prev").click(function(){
 	var self = $(this);
-	if (thisIndex >= 1) {
-		thisIndex--;
-		
-		if (thisIndex === 0) {
-			self.addClass("disabled");
+	var parent = $(this).parent();
+	var checkMain = parent.hasClass("main");
+	var checkThumb = parent.hasClass("thumb");
+	
+	if (checkMain) {
+		if (thisIndex >= 1) {
+			thisIndex--;
+
+			if (thisIndex === 0) {
+				self.addClass("disabled");
+			}
+			updateGalleryMain();
 		}
-		updateGalleryMain(thisIndex);
+		if (thisIndex === length - 2) {
+			self.siblings().removeClass("disabled");
+		}
+		console.log("prev index: " + thisIndex);
 	}
-	if (thisIndex === length - 2) {
-		self.siblings().removeClass("disabled");
+	else if (checkThumb) {
+		if (thisRow >= 1) {
+			thisRow--;
+
+			if (thisRow === 0) {
+				self.addClass("disabled");
+			}
+			updateGalleryThumb();
+		}
+		if (thisRow === rowMaxLength - 2) {
+			self.siblings().removeClass("disabled");
+		}
+		console.log("prev row: " + thisRow);
 	}
-	console.log("prev: " + thisIndex);
+
 });
 // create HTML for images and put into imageList[]
 function createImageList() {
 	length = dataImages.length;
+	rowMaxLength = length / rowMax;
+	console.log(rowMaxLength);
 	
 	for (i = 0; i < length; i++) {
 		var str = "<div class='dog-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
@@ -120,12 +183,23 @@ function createImageList() {
 	console.log(length + " images created");
 
 }
-	
+
 // fetch image from ImageList[] and put into main gallery
-function updateGalleryMain(index) {
-	galleryMain.append().html(imageList[index]);
+function updateGalleryMain() {
+	galleryImageMain.append().html(imageList[thisIndex]);
 }
 
+// fetch images from ImageList[] and put into thumb gallery
+function updateGalleryThumb() {
+	var thisStr = "";
+	var startIndex = thisRow * rowMax; 
+	maxLength = rowMax + startIndex;
+	for (i = startIndex; i < maxLength; i++) {
+		thisStr = thisStr + imageList[i];
+		console.log("thisRow: " + thisRow + "thisStr: " + thisStr + "maxLength: " + maxLength);
+	}
+	galleryImageThumb.append().html(thisStr);
+}
 
 
 </script>
