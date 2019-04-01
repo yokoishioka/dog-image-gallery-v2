@@ -17,30 +17,33 @@
 		<header id="header"></header>
 
 		<main id="content">
-			<div id="gallery-main-container">
-				<div class="controls">
-					<div class="close">CLOSE</div>
-					<div class="gallery-nav main">
-						<div class="nav-prev">PREV</div>
-						<div class="nav-next">NEXT</div>
-
-					</div>
-				</div>
-				<div class="image-viewer">
-				</div>
-			</div>
 			<div id="gallery-thumb-container">
-				<div class="controls">
-					<div class="close">CLOSE</div>
-					<div class="gallery-nav thumb">
-						<div class="nav-prev">PREV</div>
-						<div class="nav-next">NEXT</div>
+				<div class="close">CLOSE</div>
 
-					</div>
+				<div class="gallery-nav thumb">
+					<div class="nav-prev">PREV</div>
+					<div class="nav-next">NEXT</div>
+
+				</div>
+				<div class="image-counter">
 				</div>
 				<div class="image-viewer">
 				</div>
 			</div>
+			<div id="gallery-main-container">
+				<div class="close">CLOSE</div>
+	
+				<div class="gallery-nav main">
+					<div class="nav-prev">PREV</div>
+					<div class="nav-next">NEXT</div>
+
+				</div>
+				<div class="image-counter">
+				</div>	
+				<div class="image-viewer">
+				</div>
+			</div>
+			
 		</main>
 		<footer id="footer">
 		</footer>
@@ -63,6 +66,8 @@ var fileName = "assets/data/dogs.json";
 	
 var galleryImageMain = $("#gallery-main-container .image-viewer");
 var galleryImageThumb = $("#gallery-thumb-container .image-viewer");
+var galleryImageMainCounter = $("#gallery-main-container .image-counter");
+var galleryImageThumbCounter = $("#gallery-thumb-container .image-counter");
 var header = $("#header");
 var footer = $("#footer");
 
@@ -86,9 +91,13 @@ $.getJSON( fileName, function( data ) {
 
 	// put html blocks into ImageList[]
 	createImageList();
-	updateGalleryMain();
-	updateGalleryThumb();
+	updateGalleryMainImages();
+	updateGalleryMainCounter();
+	updateGalleryThumbImages();
+	updateGalleryThumbCounter();
 });	
+	
+// close gallery
 $(".close").click(function(){
 	$(this).parent().hide();
 });
@@ -108,11 +117,13 @@ $(".nav-next").click(function(){
 			if (thisIndex === length - 1) {
 				self.addClass("disabled");
 			}
-			updateGalleryMain();
+			else if (thisIndex === 1) {
+				self.siblings().removeClass("disabled");
+			}
+			updateGalleryMainImages();
+			updateGalleryMainCounter();
 		}
-		if (thisIndex === 1) {
-			self.siblings().removeClass("disabled");
-		}
+		
 		console.log("next index: " + thisIndex);
 	}
 	else if (checkThumb) {
@@ -123,11 +134,13 @@ $(".nav-next").click(function(){
 			if (thisRow === rowMaxLength - 1) {
 				self.addClass("disabled");
 			}
-			updateGalleryThumb();
+			else if (thisRow === 1) {
+				self.siblings().removeClass("disabled");
+			}
+			updateGalleryThumbImages();
+			updateGalleryThumbCounter();
 		}
-		if (thisRow === 1) {
-			self.siblings().removeClass("disabled");
-		}
+		
 		console.log("next row: " + thisRow);
 	}	
 });
@@ -138,7 +151,7 @@ $(".nav-prev").click(function(){
 	var parent = $(this).parent();
 	var checkMain = parent.hasClass("main");
 	var checkThumb = parent.hasClass("thumb");
-	
+
 	if (checkMain) {
 		if (thisIndex >= 1) {
 			thisIndex--;
@@ -146,11 +159,13 @@ $(".nav-prev").click(function(){
 			if (thisIndex === 0) {
 				self.addClass("disabled");
 			}
-			updateGalleryMain();
+			else if (thisIndex === length - 2) {
+				self.siblings().removeClass("disabled");
+			}
+			updateGalleryMainImages();
+			updateGalleryMainCounter();
 		}
-		if (thisIndex === length - 2) {
-			self.siblings().removeClass("disabled");
-		}
+		
 		console.log("prev index: " + thisIndex);
 	}
 	else if (checkThumb) {
@@ -160,20 +175,23 @@ $(".nav-prev").click(function(){
 			if (thisRow === 0) {
 				self.addClass("disabled");
 			}
-			updateGalleryThumb();
+			else if (thisRow === rowMaxLength - 2) {
+				self.siblings().removeClass("disabled");
+			}
+			updateGalleryThumbImages();
+			updateGalleryThumbCounter();
 		}
-		if (thisRow === rowMaxLength - 2) {
-			self.siblings().removeClass("disabled");
-		}
+		
 		console.log("prev row: " + thisRow);
 	}
 
 });
+
+
 // create HTML for images and put into imageList[]
 function createImageList() {
 	length = dataImages.length;
 	rowMaxLength = length / rowMax;
-	console.log(rowMaxLength);
 	
 	for (i = 0; i < length; i++) {
 		var str = "<div class='dog-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
@@ -185,23 +203,31 @@ function createImageList() {
 }
 
 // fetch image from ImageList[] and put into main gallery
-function updateGalleryMain() {
+function updateGalleryMainImages() {
 	galleryImageMain.append().html(imageList[thisIndex]);
 }
 
+// update the main gallery's image counter to show the current image count
+function updateGalleryMainCounter() {
+	galleryImageMainCounter.text((thisIndex + 1) + " of " + length);
+}
+	
 // fetch images from ImageList[] and put into thumb gallery
-function updateGalleryThumb() {
+function updateGalleryThumbImages() {
 	var thisStr = "";
 	var startIndex = thisRow * rowMax; 
 	maxLength = rowMax + startIndex;
+	
 	for (i = startIndex; i < maxLength; i++) {
 		thisStr = thisStr + imageList[i];
-		console.log("thisRow: " + thisRow + "thisStr: " + thisStr + "maxLength: " + maxLength);
 	}
 	galleryImageThumb.append().html(thisStr);
 }
 
-
+// update the thumbnail gallery's row counter to show the current row count
+function updateGalleryThumbCounter() {
+	galleryImageThumbCounter.text((thisRow + 1) + " of " + rowMaxLength);
+}
 </script>
 </body>
 </html>
