@@ -9,37 +9,224 @@
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(){
+	var dataImages = [];
+	var dataSources = [];
+	var imageList = [];
 
+	var length = 0;	
+	var rowMaxLength = 0;
+	var thisIndex = 0;
+	var rowMax = 5;
+	var thisRow = 0;
+
+
+	var fileName = "assets/data/dogs.json";
+
+	var gallerySlideshowImages = $(".gallery-slideshow-container .image-viewer");
+	var gallerySlideshowImagesCounter = $(".gallery-slideshow-container .image-counter");
+	var gallerySlideshowNavNext = $(".gallery-slideshow-container .nav-next");
+	var gallerySlideshowNavPrev = $(".gallery-slideshow-container .nav-prev");
+
+	var galleryThumbImages = $(".gallery-thumb-container .image-viewer");
+	var galleryThumbImagesCounter = $(".gallery-thumb-container .image-counter");
+	var galleryThumbNavNext = $(".gallery-thumb-container .nav-next");
+	var galleryThumbNavPrev = $(".gallery-thumb-container .nav-prev");
+
+	var close = $(".close");
+
+	var header = $("#header");
+	var footer = $("#footer");
+
+
+	// get header and footer
+	$.get("assets/snippets/header.html", function(data) {
+		header.html(data);
+	});
+	$.get("assets/snippets/footer.html", function(data) {
+		footer.html(data);
+	});
+
+	// fetch JSON from file and load images for slideshow and thumbnail galleries
+	$.getJSON( fileName, function( data ) {
+		$.each( data.dogs, function( key, val ) {	
+			dataImages[key] = val.image;
+			dataSources[key] = val.source;
+
+		});
+		console.log(dataImages.length + " values fetched");
+
+		// put html blocks into ImageList[]
+		createImageList();
+		addControls();
+		updateGallerySlideshow();
+		updateGalleryThumb();
+	});	
+
+	// close gallery
+	close.click(function(){
+		$(this).parent().parent().hide();
+	});
+
+	// go to the next image in slideshow gallery
+	gallerySlideshowNavNext.click(function(){	
+		if (thisIndex < length - 1) {
+			thisIndex++;
+			updateGallerySlideshow();
+		}
+	});
+
+	// go to the previous image in slideshow gallery 
+	gallerySlideshowNavPrev.click(function(){
+		if (thisIndex >= 1) {
+			thisIndex--;
+			updateGallerySlideshow();		
+		}
+	});
+
+	// go to the next row in thumb gallery
+	galleryThumbNavNext.click(function(){	
+		if (thisRow < rowMaxLength - 1) {
+			thisRow++;
+			updateGalleryThumb();
+		}	
+	});
+
+
+	// go to the previous row in thumb gallery
+	galleryThumbNavPrev.click(function(){
+		if (thisRow >= 1) {
+			thisRow--;
+			updateGalleryThumb();
+		}
+
+	});
+
+	// create HTML for images and put into imageList[]
+	function createImageList() {
+		length = dataImages.length;
+		rowMaxLength = length / rowMax;
+
+		for (i = 0; i < length; i++) {
+			var str = "<div class='gallery-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
+
+			imageList[i] = str;
+		}
+		console.log(length + " images created");
+
+	}
+	// update slideshow gallery's prev/next nav, images, and image counter 
+	function updateGallerySlideshow() {
+		checkImageIndexPosition();
+		updateGallerySlideshowImages();
+		updateGallerySlideshowCounter();
+	}
+	// update thumb gallery's prev/next nav, images, and row counter
+	function updateGalleryThumb() {
+		checkImageRowPosition();
+		updateGalleryThumbImages();
+		updateGalleryThumbCounter();
+	}
+	// fetch image from ImageList[] and put into slideshow gallery
+	function updateGallerySlideshowImages() {
+		gallerySlideshowImages.append().html(imageList[thisIndex]);
+	}
+
+	// fetch images from ImageList[] and put into thumb gallery
+	function updateGalleryThumbImages() {
+		var thisStr = "";
+		var startIndex = thisRow * rowMax; 
+		maxLength = rowMax + startIndex;
+
+		for (i = startIndex; i < maxLength; i++) {
+			thisStr = thisStr + imageList[i];
+		}
+		galleryThumbImages.append().html(thisStr);
+	}
+
+	// update the slideshow gallery's image counter to show the current image count
+	function updateGallerySlideshowCounter() {
+		gallerySlideshowImagesCounter.text((thisIndex + 1) + " of " + length);
+	}
+
+	// update the thumbnail gallery's row counter to show the current row count
+	function updateGalleryThumbCounter() {
+		galleryThumbImagesCounter.text((thisRow + 1) + " of " + rowMaxLength);
+	}
+
+	// check thisIndex to see if slideshow gallery prev/next nav should be disabled
+	function checkImageIndexPosition() {
+		if (thisIndex === 0) {
+			gallerySlideshowNavPrev.addClass("disabled");
+		}
+		else if (thisIndex === 1) {
+			gallerySlideshowNavPrev.removeClass("disabled");
+		}
+		else if (thisIndex === length - 1) {
+			gallerySlideshowNavNext.addClass("disabled");
+		}
+		else if (thisIndex === length - 2) {
+			gallerySlideshowNavNext.removeClass("disabled");
+		}
+	}
+	// check thisRow to see if thumb gallery prev/next nav should be disabled
+	function checkImageRowPosition() {
+		if (thisRow === 0) {
+			galleryThumbNavPrev.addClass("disabled");
+		}
+		else if (thisRow === 1) {
+			galleryThumbNavPrev.removeClass("disabled");
+		}
+		if (thisRow === rowMaxLength - 2) {
+			galleryThumbNavNext.removeClass("disabled");
+		}
+		else if (thisRow === rowMaxLength - 1) {
+			galleryThumbNavNext.addClass("disabled");
+		}
+	}
+	function addControls() {
+		$(".gallery-nav .nav-prev").each(function(){
+			$(this).html("<a title='Get Previous'><i class='fas fa-angle-double-left'></i></a>");
+	
+		});
+		$(".gallery-nav .nav-next").each(function(){
+			$(this).html("<a title='Get Next'><i class='fas fa-angle-double-right'></i></a>");
+		});
+		$(".close").each(function(){
+			$(this).html("<a class='close' title='Close'><i class='far fa-times-circle'></i></a>");
+		});
+	}
+});
+</script>
 </head>
 
 <body>
-	<div id="container">
+	<div id="container" class="site-container">
 		<header id="header"></header>
 
 		<main id="content">
-			<div class="gallery-thumb gallery-thumb-container">
-				<div class="close">CLOSE</div>
-
-				<div class="gallery-nav">
-					<div class="nav-prev">PREV</div>
-					<div class="nav-next">NEXT</div>
-
-				</div>
-				<div class="image-counter">
+			<div class="gallery-thumb-container">
+				<div class="gallery-controls">
+					<div class="gallery-nav">
+						<div class="nav-prev"></div>
+						<div class="image-counter"></div>
+						<div class="nav-next"></div>
+					</div>
+					<div class="close"></div>	
 				</div>
 				<div class="image-viewer">
 				</div>
 			</div>
-			<div class="gallery-slideshow gallery-slideshow-container">
-				<div class="close">CLOSE</div>
-	
-				<div class="gallery-nav">
-					<div class="nav-prev">PREV</div>
-					<div class="nav-next">NEXT</div>
-
+			<div class="gallery-slideshow-container">
+				<div class="gallery-controls">
+					<div class="gallery-nav">
+						<div class="nav-prev"></div>
+						<div class="image-counter"></div>
+						<div class="nav-next"></div>
+					</div>
+					<div class="close"></div>	
 				</div>
-				<div class="image-counter">
-				</div>	
 				<div class="image-viewer">
 				</div>
 			</div>
@@ -50,180 +237,5 @@
 		
 	</div>
 	
-<script>
-var dataImages = [];
-var dataSources = [];
-var imageList = [];
-	
-var length = 0;	
-var rowMaxLength = 0;
-var thisIndex = 0;
-var rowMax = 5;
-var thisRow = 0;
-
-	
-var fileName = "assets/data/dogs.json";
-	
-var gallerySlideshowImages = $(".gallery-slideshow-container .image-viewer");
-var gallerySlideshowImagesCounter = $(".gallery-slideshow-container .image-counter");
-var gallerySlideshowNavNext = $(".gallery-slideshow-container .nav-next");
-var gallerySlideshowNavPrev = $(".gallery-slideshow-container .nav-prev");
-	
-var galleryThumbImages = $(".gallery-thumb-container .image-viewer");
-var galleryThumbImagesCounter = $(".gallery-thumb-container .image-counter");
-var galleryThumbNavNext = $(".gallery-thumb-container .nav-next");
-var galleryThumbNavPrev = $(".gallery-thumb-container .nav-prev");
-	
-var close = $(".close");
-	
-var header = $("#header");
-var footer = $("#footer");
-
-
-// get header and footer
-$.get("assets/snippets/header.html", function(data) {
-	header.html(data);
-});
-$.get("assets/snippets/footer.html", function(data) {
-	footer.html(data);
-});
-
-// fetch JSON from file and load images for slideshow and thumbnail galleries
-$.getJSON( fileName, function( data ) {
-	$.each( data.dogs, function( key, val ) {	
-		dataImages[key] = val.image;
-		dataSources[key] = val.source;
-
-	});
-	console.log(dataImages.length + " values fetched");
-
-	// put html blocks into ImageList[]
-	createImageList();
-	updateGallerySlideshow();
-	updateGalleryThumb();
-});	
-	
-// close gallery
-close.click(function(){
-	$(this).parent().hide();
-});
-	
-// go to the next image in slideshow gallery
-gallerySlideshowNavNext.click(function(){	
-	if (thisIndex < length - 1) {
-		thisIndex++;
-		updateGallerySlideshow();
-	}
-});
-
-// go to the previous image in slideshow gallery 
-gallerySlideshowNavPrev.click(function(){
-	if (thisIndex >= 1) {
-		thisIndex--;
-		updateGallerySlideshow();		
-	}
-});
-	
-// go to the next row in thumb gallery
-galleryThumbNavNext.click(function(){	
-	if (thisRow < rowMaxLength - 1) {
-		thisRow++;
-		updateGalleryThumb();
-	}	
-});
-	
-
-// go to the previous row in thumb gallery
-galleryThumbNavPrev.click(function(){
-	if (thisRow >= 1) {
-		thisRow--;
-		updateGalleryThumb();
-	}
-
-});
-
-// create HTML for images and put into imageList[]
-function createImageList() {
-	length = dataImages.length;
-	rowMaxLength = length / rowMax;
-	
-	for (i = 0; i < length; i++) {
-		var str = "<div class='dog-image' id='" + i + "'><img src='/dog-image-gallery" + dataImages[i] + "' alt='asana: san francisco pet adoption agency' title='asana: san francisco pet adoption agency'></div>";
-
-		imageList[i] = str;
-	}
-	console.log(length + " images created");
-
-}
-// update slideshow gallery's prev/next nav, images, and image counter 
-function updateGallerySlideshow() {
-	checkImageIndexPosition();
-	updateGallerySlideshowImages();
-	updateGallerySlideshowCounter();
-}
-// update thumb gallery's prev/next nav, images, and row counter
-function updateGalleryThumb() {
-	checkImageRowPosition();
-	updateGalleryThumbImages();
-	updateGalleryThumbCounter();
-}
-// fetch image from ImageList[] and put into slideshow gallery
-function updateGallerySlideshowImages() {
-	gallerySlideshowImages.append().html(imageList[thisIndex]);
-}
-
-// fetch images from ImageList[] and put into thumb gallery
-function updateGalleryThumbImages() {
-	var thisStr = "";
-	var startIndex = thisRow * rowMax; 
-	maxLength = rowMax + startIndex;
-	
-	for (i = startIndex; i < maxLength; i++) {
-		thisStr = thisStr + imageList[i];
-	}
-	galleryThumbImages.append().html(thisStr);
-}
-	
-// update the slideshow gallery's image counter to show the current image count
-function updateGallerySlideshowCounter() {
-	gallerySlideshowImagesCounter.text((thisIndex + 1) + " of " + length);
-}
-
-// update the thumbnail gallery's row counter to show the current row count
-function updateGalleryThumbCounter() {
-	galleryThumbImagesCounter.text((thisRow + 1) + " of " + rowMaxLength);
-}
-	
-// check thisIndex to see if slideshow gallery prev/next nav should be disabled
-function checkImageIndexPosition() {
-	if (thisIndex === 0) {
-		gallerySlideshowNavPrev.addClass("disabled");
-	}
-	else if (thisIndex === 1) {
-		gallerySlideshowNavPrev.removeClass("disabled");
-	}
-	else if (thisIndex === length - 1) {
-		gallerySlideshowNavNext.addClass("disabled");
-	}
-	else if (thisIndex === length - 2) {
-		gallerySlideshowNavNext.removeClass("disabled");
-	}
-}
-// check thisRow to see if thumb gallery prev/next nav should be disabled
-function checkImageRowPosition() {
-	if (thisRow === 0) {
-		galleryThumbNavPrev.addClass("disabled");
-	}
-	else if (thisRow === 1) {
-		galleryThumbNavPrev.removeClass("disabled");
-	}
-	if (thisRow === rowMaxLength - 2) {
-		galleryThumbNavNext.removeClass("disabled");
-	}
-	else if (thisRow === rowMaxLength - 1) {
-		galleryThumbNavNext.addClass("disabled");
-	}
-}
-</script>
 </body>
 </html>
