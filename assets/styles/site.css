@@ -29,6 +29,7 @@ a:hover {
 .disabled a:hover {
 	cursor: not-allowed;
 }
+
 .active {
 	border:2px solid tomato;
 }
@@ -65,19 +66,6 @@ a:hover {
 	width:100%;
 	border-radius:5px;
 }
-
-
-/* Gallery thumbnail */
-.gallery-thumb-container .image-viewer {
-	display:flex;
-	justify-content:center;
-}
-.gallery-thumb-container .gallery-image img {
-	margin:1.0em;
-	width:9.0em;
-	height:6.0em;
-}
-
 /* Gallery controls */
 .close {
 	float:right;
@@ -98,3 +86,15 @@ a:hover {
 	margin-right:1.0em;
 	margin-top:0.5em;
 }
+
+/* Gallery thumbnail */
+.gallery-thumb-container .image-viewer {
+	display:flex;
+	justify-content:center;
+}
+.gallery-thumb-container .gallery-image img {
+	margin:1.0em;
+	width:9.0em;
+	height:6.0em;
+}
+
