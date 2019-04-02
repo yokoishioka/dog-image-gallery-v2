@@ -73,14 +73,27 @@ $(document).ready(function(){
 	gallerySlideshowNavNext.click(function(){	
 		if (thisIndex < length - 1) {
 			thisIndex++;
+			// update the thumb gallery to the next row
+			if (thisIndex % rowMax === 0) {
+				thisRow = thisIndex / rowMax;
+				updateGalleryThumb();
+			}
+			updateBorder();
 			updateGallerySlideshow();
 		}
+		
 	});
 
 	// go to the previous image in slideshow gallery 
 	gallerySlideshowNavPrev.click(function(){
 		if (thisIndex >= 1) {
 			thisIndex--;
+			// update the thumb gallery to the prev row
+			if (thisIndex % rowMax === rowMax - 1) {
+				thisRow = ((thisIndex + 1) / rowMax) - 1;
+				updateGalleryThumb();
+			}
+			updateBorder();
 			updateGallerySlideshow();		
 		}
 	});
@@ -140,10 +153,9 @@ $(document).ready(function(){
 	}
 	// update slideshow gallery's prev/next nav, images, and image counter 
 	function updateGallerySlideshow() {
-		updateBorder();
 		checkImageIndexPosition();
 		updateGallerySlideshowImages();
-		updateGallerySlideshowCounter();
+		updateGallerySlideshowCounter();		
 	}
 	// update thumb gallery's prev/next nav, images, and row counter
 	function updateGalleryThumb() {
@@ -210,12 +222,11 @@ $(document).ready(function(){
 			galleryThumbNavNext.addClass("disabled");
 		}
 	}
-
+	// add border around active thumb gallery image
 	function updateBorder() {
 		
 		$(".active").removeClass("active");
 		$(".gallery-thumb-container #" + thisIndex).children("img").addClass("active");
-		
 	}
 });
 </script>
