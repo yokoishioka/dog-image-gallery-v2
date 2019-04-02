@@ -21,7 +21,6 @@ $(document).ready(function(){
 	var rowMax = 5;
 	var thisRow = 0;
 
-
 	var fileName = "assets/data/dogs.json";
 
 	var gallerySlideshowImages = $(".gallery-slideshow-container .image-viewer");
@@ -40,15 +39,14 @@ $(document).ready(function(){
 	var footer = $("#footer");
 
 
-	// get header and footer
+	/* get header and footer */
 	$.get("assets/snippets/header.html", function(data) {
 		header.html(data);
 	});
 	$.get("assets/snippets/footer.html", function(data) {
 		footer.html(data);
 	});
-
-	// fetch JSON from file and load images for slideshow and thumbnail galleries
+	/* fetch JSON from file and load images for slideshow and thumbnail galleries */
 	$.getJSON( fileName, function( data ) {
 		$.each( data.dogs, function( key, val ) {	
 			dataImages[key] = val.image;
@@ -63,69 +61,65 @@ $(document).ready(function(){
 		updateGallerySlideshow();
 		updateGalleryThumb();
 	});	
-
-	// close gallery
+	/* get rid of border around active thumb gallery image and close gallery */
 	close.click(function(){
+		$(".active").each(function() {
+			$(this).removeClass("active");
+		});
 		$(this).parent().parent().hide();
 	});
-
-	// go to the next image in slideshow gallery
+	/* go to the next image in slideshow gallery */
 	gallerySlideshowNavNext.click(function(){	
 		if (thisIndex < length - 1) {
 			thisIndex++;
+			updateGallerySlideshow();
+			
 			// update the thumb gallery to the next row
 			if (thisIndex % rowMax === 0) {
 				thisRow = thisIndex / rowMax;
 				updateGalleryThumb();
 			}
 			updateBorder();
-			updateGallerySlideshow();
 		}
 		
 	});
-
-	// go to the previous image in slideshow gallery 
+	/* go to the previous image in slideshow gallery */
 	gallerySlideshowNavPrev.click(function(){
 		if (thisIndex >= 1) {
 			thisIndex--;
+			updateGallerySlideshow();
+			
 			// update the thumb gallery to the prev row
 			if (thisIndex % rowMax === rowMax - 1) {
 				thisRow = ((thisIndex + 1) / rowMax) - 1;
 				updateGalleryThumb();
 			}
-			updateBorder();
-			updateGallerySlideshow();		
+			updateBorder();		
 		}
 	});
-
-	// go to the next row in thumb gallery
+	/* go to the next row in thumb gallery */
 	galleryThumbNavNext.click(function(){	
 		if (thisRow < rowMaxLength - 1) {
 			thisRow++;
 			updateGalleryThumb();
 		}	
 	});
-
-
-	// go to the previous row in thumb gallery
+	/* go to the previous row in thumb gallery */
 	galleryThumbNavPrev.click(function(){
 		if (thisRow >= 1) {
 			thisRow--;
 			updateGalleryThumb();
 		}
-
 	});
-	
-	
+	/* update slideshow image if click on image in thumb gallery */
 	$(document).on("click", ".gallery-thumb-container .gallery-image", function(){
 		thisIndex = parseInt(this.id);
 		updateBorder($(this));
+		$(".gallery-slideshow-container").show();
 		updateGallerySlideshow();
-		
+	
 	});
-
-
-	// add hyperlinks to the gallery nav controls
+	/* add hyperlinks to the gallery nav controls */
 	function addControls() {
 		$(".gallery-nav .nav-prev").each(function(){
 			$(this).html("<a title='Get Previous'><i class='fas fa-angle-double-left'></i></a>");
@@ -138,7 +132,7 @@ $(document).ready(function(){
 			$(this).html("<a class='close' title='Close'><i class='far fa-times-circle'></i></a>");
 		});
 	}
-	// create HTML for images and put into imageList[]
+	/* create HTML for images and put into imageList[] */
 	function createImageList() {
 		length = dataImages.length;
 		rowMaxLength = length / rowMax;
@@ -151,25 +145,24 @@ $(document).ready(function(){
 		console.log(length + " images created");
 
 	}
-	// update slideshow gallery's prev/next nav, images, and image counter 
+	/* update slideshow gallery's prev/next nav, images, and image counter */
 	function updateGallerySlideshow() {
 		checkImageIndexPosition();
 		updateGallerySlideshowImages();
 		updateGallerySlideshowCounter();		
 	}
-	// update thumb gallery's prev/next nav, images, and row counter
+	/* update thumb gallery's prev/next nav, images, and row counter */
 	function updateGalleryThumb() {
 		checkImageRowPosition();
 		updateGalleryThumbImages();
 		updateGalleryThumbCounter();
 	}
-	// fetch image from ImageList[] and put into slideshow gallery
+	/* fetch image from ImageList[] and put into slideshow gallery */
 	function updateGallerySlideshowImages() {
 		gallerySlideshowImages.append().html(imageList[thisIndex]);
 
 	}
-
-	// fetch images from ImageList[] and put into thumb gallery
+	/* fetch images from ImageList[] and put into thumb gallery */
 	function updateGalleryThumbImages() {
 		var thisStr = "";
 		var startIndex = thisRow * rowMax; 
@@ -180,18 +173,15 @@ $(document).ready(function(){
 		}
 		galleryThumbImages.append().html(thisStr);
 	}
-
-	// update the slideshow gallery's image counter to show the current image count
+	/* update the slideshow gallery's image counter to show the current image count */
 	function updateGallerySlideshowCounter() {
 		gallerySlideshowImagesCounter.text((thisIndex + 1) + " of " + length);
 	}
-
-	// update the thumbnail gallery's row counter to show the current row count
+	/* update the thumbnail gallery's row counter to show the current row count */
 	function updateGalleryThumbCounter() {
 		galleryThumbImagesCounter.text((thisRow + 1) + " of " + rowMaxLength);
 	}
-
-	// check thisIndex to see if slideshow gallery prev/next nav should be disabled
+	/* check thisIndex to see if slideshow gallery prev/next nav should be disabled */
 	function checkImageIndexPosition() {
 		if (thisIndex === 0) {
 			gallerySlideshowNavPrev.addClass("disabled");
@@ -207,7 +197,7 @@ $(document).ready(function(){
 		}
 		console.log("thisIndex: " + thisIndex + " length: " + length);
 	}
-	// check thisRow to see if thumb gallery prev/next nav should be disabled
+	/* check thisRow to see if thumb gallery prev/next nav should be disabled */
 	function checkImageRowPosition() {
 		if (thisRow === 0) {
 			galleryThumbNavPrev.addClass("disabled");
@@ -222,9 +212,8 @@ $(document).ready(function(){
 			galleryThumbNavNext.addClass("disabled");
 		}
 	}
-	// add border around active thumb gallery image
-	function updateBorder() {
-		
+	/* add border around active thumb gallery image */
+	function updateBorder() {		
 		$(".active").removeClass("active");
 		$(".gallery-thumb-container #" + thisIndex).children("img").addClass("active");
 	}
@@ -234,7 +223,7 @@ $(document).ready(function(){
 
 <body>
 	<div id="container" class="site-container">
-		<header id="header"></header>
+		<header id="header"><noscript>Our dogs are here, I promise! Please turn on your JavaScript to find your new best friend.</noscript></header>
 
 		<main id="content">
 			<div class="gallery-thumb-container">
@@ -243,8 +232,7 @@ $(document).ready(function(){
 						<div class="nav-prev"></div>
 						<div class="image-counter"></div>
 						<div class="nav-next"></div>
-					</div>
-					<div class="close"></div>	
+					</div>	
 				</div>
 				<div class="image-viewer">
 				</div>
